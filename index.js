@@ -2,7 +2,7 @@
 
 const line = require("@line/bot-sdk");
 const express = require("express");
-
+const { addCheck } = require("./db");
 // create LINE SDK config from env variables
 const config = {
   channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
@@ -31,17 +31,19 @@ app.post("/callback", line.middleware(config), (req, res) => {
 });
 
 // event handler
-function handleEvent(event) {
+async function handleEvent(event) {
   if (event.type !== "message" || event.message.type !== "text") {
     // ignore non-text-message event
     return Promise.resolve(null);
   }
   let { text } = event.message;
-  if (text === "簽到") {
-  }
 
-  // create a echoing text message
-  const echo = { type: "text", text };
+  if (text === "簽到") {
+    // await addCheck(event.message.userId);
+    text = `簽到成功`;
+  }
+  console.log(text);
+  let echo = { type: "text", text };
 
   // use reply API
   return client.replyMessage(event.replyToken, echo);
